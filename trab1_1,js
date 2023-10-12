@@ -1,0 +1,68 @@
+function validateProperty(obj, validatorss){
+  let a 
+  let state=true
+  for(let n in obj){//n corresponde a p1 e p2
+    console.log("supppp",n)
+    a=obj[n] 
+    let g=validatorss.name
+    if(g in obj){
+   //   console.log("ahhhhh",g)
+   //  console.log( "bbbbbbb",validatorss.name)
+    if(n==validatorss.name){
+      for(let p of validatorss.validators){
+       // console.log(a)
+       // console.log(p(a))
+        if (p(a)==false){
+         state= false
+        }
+       }
+      }
+    }
+    else state = false
+    }
+  return state
+
+}
+const validator = {name : "p1" , validators: [s => typeof s == 'string' && s.length > 2, s => s[0]=="a"]  }
+const obj1 = { p1 : "abc" }
+const obj2 = { p2 : 123 }
+const obj3 = { p1 : "a" , p2 : 123 }
+
+//console.log(validateProperty(obj1, validator)) 
+//console.log(validateProperty(obj2, validator)) //false
+//console.log(validateProperty(obj3, validator)) //false
+
+const validators = [
+  {
+     name: "p1", validators: [s => typeof s == 'string' && s.length > 2, s => s[0] == "a"]
+  },
+  {
+     name: "p2", validators: [s => Number.isInteger(s)]
+  }
+]
+
+const obj21 = { p1: "a" }
+const obj22 = { p1: 123 }
+const obj23 = { p1: "abc", p2: 123 }
+
+//validator.name = p1,p2 on the last case, the remaining shows nothing
+function copyProperties(obj, propValidators) {
+  return propValidators
+    .filter(validator =>  validateProperty(obj, validator))
+    //result is the accumulator, validator is the previous validator
+    .reduce((result, validator) => {console.log(result[validator.name],"heyyy"),
+      result[validator.name] = obj[validator.name];
+      console.log(result[validator.name], obj[validator.name])
+      return result;
+    }, {});
+}
+
+//console.log(copyProperties(obj21, validators)) // {}
+//console.log(copyProperties(obj22, validators)) // {}
+console.log(copyProperties(obj23, validators)) // { p1: 'abc', p2: 123 }   
+
+Object.prototype.copyProperties= function( predicate){
+  return copyProperties(this, predicate)
+}
+
+
